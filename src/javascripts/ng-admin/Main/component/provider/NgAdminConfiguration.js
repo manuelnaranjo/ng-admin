@@ -33,6 +33,14 @@ NgAdminConfiguration.prototype.field = function(name, type) {
     return this.adminDescription.field(name, type);
 };
 
+NgAdminConfiguration.prototype.row = function(fields) {
+    return this.adminDescription.row().fields(fields);
+}
+
+NgAdminConfiguration.prototype.fieldset = function(name) {
+    return this.adminDescription.fieldset(name);
+}
+
 NgAdminConfiguration.prototype.registerFieldType = function(name, type) {
     return this.adminDescription.registerFieldType(name, type);
 };
