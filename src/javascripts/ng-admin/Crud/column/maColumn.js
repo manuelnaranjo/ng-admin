@@ -61,7 +61,13 @@ define(function (require) {
                 scope.gotoReference = function () {
                     var referenceEntity = scope.field.targetEntity().name();
                     var relatedEntity = Configuration().getEntity(referenceEntity);
-                    var referenceId = scope.entry.values[scope.field.name()];
+                    var referenceId;
+                    if (scope.field.type() !== 'nested_reference') {
+                        referenceId = scope.entry.values[scope.field.name()];
+                    } else {
+                        console.log('nested id');
+                        referenceId = scope.field.referenceId(scope.entry);
+                    }
                     var route = getDetailLinkRouteName(scope.field, relatedEntity);
                     $state.go($state.get(route), {
                         entity: referenceEntity,
