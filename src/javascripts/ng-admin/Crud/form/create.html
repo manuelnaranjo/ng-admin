@@ -17,8 +17,20 @@
     <form class="col-lg-12 form-horizontal" name="formController.form" ng-submit="formController.submitCreation($event)">
         <div ng-repeat="field in ::formController.fields track by $index">
 
-            <div class="form-field form-group" ng-if="!field.isFieldset()">
-                <ma-field field="::field" entry="entry" entity="::entity" form="formController.form" datastore="::formController.dataStore"></ma-field>
+            <div class="form-group" ng-if="!field.isFieldset()"
+                 ng-class="{'row-fluid': field.isRow(), 'form-field': !field.isRow()}">
+                <ma-field field="::field" entry="entry" entity="::entity"
+                          form="formController.form"
+                          datastore="::formController.dataStore"
+                          ng-if="!field.isRow()"></ma-field>
+                <div ng-if="field.isRow()"
+                     ng-repeat="rowField in ::field.fields()"
+                     ng-class="::field.editCssSpanClass(rowField)">
+                    <ma-field field="::rowField" entry="entry"
+                              entity="::entity" form="formController.form"
+                              datastore="::formController.dataStore">
+                    </ma-field>
+                </div>
             </div>
 
             <fieldset ng-if="field.isFieldset()">
