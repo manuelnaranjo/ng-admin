@@ -68,7 +68,7 @@ FormController.prototype.submitEdition = function ($event) {
     var view = this.view;
     var restEntry = this.$scope.entry.transformToRest(view.fields());
     this.progression.start();
-    this.WriteQueries
+    return this.WriteQueries
         .updateOne(view, restEntry, this.originEntityId)
         .then(() => {
             this.progression.done();
