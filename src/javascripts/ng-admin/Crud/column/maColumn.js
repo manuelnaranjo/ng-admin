@@ -44,10 +44,18 @@ define(function (require) {
                 scope.entry = scope.entry();
                 scope.entity = scope.entity();
                 var type = scope.field.type();
+                var widget;
                 if (isDetailLink(scope.field, scope.entity)) {
-                    element.append(FieldViewConfiguration[type].getLinkWidget());
+                    widget = FieldViewConfiguration[type].getLinkWidget();
                 } else {
-                    element.append(FieldViewConfiguration[type].getReadWidget());
+                    widget = FieldViewConfiguration[type].getReadWidget();
+                }
+                element.append(widget);
+                if (widget.indexOf('gotoDetail')>-1) {
+                    element.children().attr('ng-href', '{{::getDetail()}}');
+                }
+                else if (widget.indexOf('gotoReference')>-1) {
+                    element.children().attr('ng-href', '{{::getReference()}}');
                 }
                 $compile(element.contents())(scope);
                 scope.gotoDetail = function () {
@@ -58,6 +66,16 @@ define(function (require) {
                         id: scope.entry.identifierValue
                     }));
                 };
+                scope.getDetail = function() {
+                    var route = getDetailLinkRouteName(scope.field,
+                                                       scope.entity);
+                    var params = angular.extend({}, $state.params, {
+                        entity: scope.entry.entityName,
+                        id: scope.entry.identifierValue
+                    });
+                    return $state.href(route, params);
+                };
+
                 scope.gotoReference = function () {
                     var referenceEntity = scope.field.targetEntity().name();
                     var relatedEntity = Configuration().getEntity(referenceEntity);
@@ -73,6 +91,23 @@ define(function (require) {
                         entity: referenceEntity,
                         id: referenceId
                     });
+                };
+
+                scope.getReference = function () {
+                    var referenceEntity = scope.field.targetEntity().name();
+                    var relatedEntity = Configuration().getEntity(referenceEntity);
+                    var referenceId;
+                    if (scope.field.type() !== 'nested_reference') {
+                        referenceId = scope.entry.values[scope.field.name()];
+                    } else {
+                        referenceId = scope.field.referenceId(scope.entry);
+                    }
+                    var route = getDetailLinkRouteName(scope.field, relatedEntity);
+                    var params = {
+                        entity: referenceEntity,
+                        id: referenceId
+                    };
+                    return $state.href(route, params);
                 };
             }
         };
