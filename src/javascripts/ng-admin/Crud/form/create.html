@@ -36,7 +36,7 @@
             <fieldset ng-if="field.isFieldset()">
                 <legend>{{::field.label()}}</legend>
                 <div ng-repeat="row in ::field.rows()"
-                     class="row-fluid" ng-class="::row.getClasses()">
+                     class="row-fluid" ng-class="::row.getCssClasses()">
                     <div ng-repeat="rowField in ::row.fields()"
                          class="form-group"
                          ng-class="::row.editCssSpanClass(rowField)">

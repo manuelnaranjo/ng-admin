@@ -68,4 +68,3 @@ function maChoiceField($compile) {
 maChoiceField.$inject = ['$compile'];
 
 module.exports = maChoiceField;
-
