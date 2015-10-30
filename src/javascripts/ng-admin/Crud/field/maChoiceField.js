@@ -38,7 +38,7 @@ function maChoiceField($compile) {
                     scope.placeholder = (attributes && attributes.placeholder) || 'Filter values';
 
                     var template = `
-                        <ui-select ng-model="$parent.value" ng-required="v.required" id="{{ name }}" name="{{ name }}">
+                        <ui-select ng-model="$parent.value" ng-required="v.required" id="{{ name }}" name="{{ name }}" title="{{ $select.selected.title }}">
                             <ui-select-match allow-clear="{{ !v.required }}" placeholder="{{ placeholder }}">{{ $select.selected.label }}</ui-select-match>
                             <ui-select-choices ${refreshAttributes} repeat="item.value as item in choices | filter: {label: $select.search} track by $index">
                                 {{ item.label }}
