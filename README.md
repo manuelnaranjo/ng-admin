@@ -3,29 +3,12 @@ ng-admin [![Build Status](https://travis-ci.org/marmelab/ng-admin.svg?branch=mas
 
 [![Join the chat at https://gitter.im/marmelab/ng-admin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/marmelab/ng-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Plug me to your RESTFul API to get a complete administration tool (CRUD, multi-model relationships, dashboard, complex form widgets) in no time!
+Plug me to your RESTFul API to get a complete administration interface (datagrid, filters, complex form widgets, multi-model relationships, dashboard) in no time! Beyond simple CRUD, ng-admin lets you build sophisticated GUIs without getting in your way.
 
-[![Screencast](http://marmelab.com/ng-admin/images/screencast.png)](https://vimeo.com/118697682)
+[![Screencast](http://static.marmelab.com/ng-admin-09-video-thumbnail.png)](https://vimeo.com/143909685)
 
-Check out the [online demo](http://marmelab.com/ng-admin-demo/) ([source](https://github.com/marmelab/ng-admin-demo)).
-
-* [Installation](#installation)
-* [Getting Started](doc/Getting-started.md)
-* [Usage Example](#usage-example)
-* [Configuration Reference](doc/Configuration-reference.md)
-* [Relationships](#relationships)
-* [Menu Configuration](doc/Menus.md)
-* [Dashboard Configuration](doc/Dashboard.md)
-* [Customizing the API Mapping](doc/API-mapping.md)
-* [Theming](doc/Theming.md)
-* [Adding Custom Pages](doc/Custom-pages.md)
-* [Adding Custom Types](doc/Custom-types.md)
-* [Getting Ready For Production](doc/production.md)
-* [Frequently Asked Questions](doc/FAQ.md)
-* [News](#news)
-* [Support](#support)
-* [Contributing](#contributing)
-* [License](#license)
+* [Online demo](http://marmelab.com/ng-admin-demo/) ([source](https://github.com/marmelab/ng-admin-demo))
+* [Documentation](http://ng-admin-book.marmelab.com/)
 
 ## Installation
 
@@ -69,9 +52,10 @@ Add the `ng-admin.min.css` and `ng-admin.min.js` to the HTML, add a `<div ui-vie
 
 See the [Getting Started](doc/Getting-started.md) dedicated chapter for a step-by-step tutorial aimed at beginners.
 
-## Usage Example
+## Usage Examples
 
-You can find a detailed configuration in the [blog demo configuration](examples/blog/config.js), where the entities are posts, comments, and tags. The remote REST API uses fake data, and is reset every hour. 
+* You can find a simple configuration in the [blog admin demo](http://ng-admin.marmelab.com/#/dashboard) ([source](examples/blog/config.js)), where the entities are posts, comments, and tags.  The remote REST API is simulated in the browser, using [FakeRest](https://github.com/marmelab/FakeRest).
+* The [Posters Galore demo](http://marmelab.com/ng-admin-demo/) ([source](https://github.com/marmelab/ng-admin-demo)) is a more complete example of an e-commerce administration, with custom authentication, pages, directives and modules, all well organized via WebPack. The remote REST API is also simulated in the browser, using [FakeRest](https://github.com/marmelab/FakeRest).
 
 ## Configuration Reference
 
@@ -99,13 +83,9 @@ See [Configuration API Reference](doc/Configuration-reference.md) dedicated chap
 
 ## Relationships
 
-ng-admin manages dependencies between entities when you use some special field types.
+Ng-admin supports relationships between entities in read and write views, and provides specialized field types for that: `reference`, `referenced_list`, `reference_many`, and `embedded_list`. The [Relationships Reference chapter](doc/Relationships.md) describes in more details which field type to use for which case.
 
-* Use the `reference` field type to display and edit many-to-one relationships (e.g. the author for a post)
-* Use the `referenced_list` field type to display one-to-many relationships (e.g. the posts of an author)
-* Use the `reference_many` field type to edit one to many relationships (e.g. the posts of an author)
-
-See the Fields section of the [Configuration API Reference chapter](doc/Configuration-reference.md) for more details.
+Also, the Fields section of the [Configuration API Reference chapter](doc/Configuration-reference.md) has a list of all settings for each of these field types.
 
 ## Menu Configuration
 
@@ -149,11 +129,11 @@ See the [Adding Custom Types](doc/Custom-types.md) dedicated chapter.
 
 ## Getting Ready For Production
 
-To build the ng-admin source with the dependencies you need, and to get hints about performance boosters, head to the [Getting Ready For Production](doc/production.md) dedicated chapter.
+To build the ng-admin source with the dependencies you need, and to get hints about performance boosters, head to the [Getting Ready For Production](doc/Production.md) dedicated chapter.
 
 ## News
 
-Follow the [marmelab blog](http://marmelab.com/blog/) for news about ng-admin (tutorials, plugins, new releases, etc). 
+Follow the [marmelab blog](http://marmelab.com/blog/) for news about ng-admin (tutorials, plugins, new releases, etc).
 
 You should also watch the [ng-admin release page on GitHub](https://github.com/marmelab/ng-admin/releases) for announcements on new releases, and complete changelog.
 
@@ -162,7 +142,7 @@ You should also watch the [ng-admin release page on GitHub](https://github.com/m
 Ng-admin is an open-source project, with a community getting larger every  day. You will get help by asking politely in any the following channels:
 
 * [StackOverflow](http://stackoverflow.com/questions/tagged/ng-admin)
-* [Gitter (live chat)](https://gitter.im/marmelab/ng-admin)
+* [Gitter (live chat)](https://gitter.im/marmelab/ng-admin) [![Join the chat at https://gitter.im/marmelab/ng-admin](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/marmelab/ng-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Please give as much context as possible, including and admin configuration snippet, and the response from the API you're mapping.
 

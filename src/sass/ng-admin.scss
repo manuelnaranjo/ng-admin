@@ -104,7 +104,7 @@ ul.collapsible {
 }
 
 ma-view-actions {
-    margin: 25px 0 15px 0;
+    margin: 3px 0 0 0;
     float: right;
 }
 
@@ -141,6 +141,11 @@ ma-view-actions {
 }
 
 .grid {
+
+    .ng-admin-type-number, .ng-admin-type-float {
+        text-align: right;
+        padding-right: 1em;
+    }
 
     background-color: #fff;
 
@@ -206,6 +211,10 @@ div.bottom-loader {
         padding-right: 12px;
     }
 
+    .has-feedback .datepicker .form-control {
+        padding-right: 12px;
+    }
+
     textarea {
         height: 150px;
     }
@@ -229,6 +238,29 @@ div.bottom-loader {
         -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         width: 100%;
+    }
+
+    .date_widget {
+        width: 10em;
+        @media (max-width: 768px) {
+            width: 100%
+        }
+    }
+
+    .datetime_widget {
+        width: 15em;
+        @media (max-width: 768px) {
+            width: 100%
+        }
+    }
+
+    .remove_button_container {
+        float: right;
+        @media (max-width: 992px) {
+            float: none;
+            display: block;
+            text-align: right;
+        }
     }
 
     .ta-toolbar button {
@@ -261,11 +293,28 @@ div.bottom-loader {
                 }
             }
         }
+
+        .ng-admin-type-embedded_list, .ng-admin-type-referenced_list {
+            .table-condensed > thead > tr > th {
+                padding-top: 0;
+            }
+        }
     }
 
     .CodeMirror {
         border: 1px solid #CCC;
         border-radius: 4px;
+    }
+
+    .ui-select-multiple {
+        &.ui-select-bootstrap {
+            input.ui-select-search {
+                height: 29px;
+                box-shadow: none;
+                padding: 0 6px 2px 10px;
+                margin-bottom: 0;
+            }
+        }
     }
 }
 
@@ -300,6 +349,39 @@ div.bottom-loader {
         }
 
         .row-fluid {
+            label {
+                padding: 0px;
+            }
+
+            label.col-sm-2 {
+                width: 100%;
+                text-align: left;
+            }
+
+            .row {
+                .col-sm-4, .col-md-3 {
+                    width: 100%;
+                    text-align: left;
+                }
+            }
+
+            p span{
+                display: block;
+                height: 34px;
+                padding-top: 12px;
+                padding-bottom: 7px;
+                font-size: 14px;
+            }
+
+            .date_widget {
+                width: 100%;
+            }
+
+            p {
+                padding-top: 13px;
+                paddint-bottom: 6px;
+            }
+
             .form-group {
                 margin-left: initial;
                 margin-right: initial;

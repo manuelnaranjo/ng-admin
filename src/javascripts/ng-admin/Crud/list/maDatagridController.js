@@ -12,19 +12,23 @@ define(function () {
      *
      * @constructor
      */
-    function DatagridController($scope, $location, $stateParams, $anchorScroll) {
+    function DatagridController($scope, $location, $stateParams, $anchorScroll, $attrs) {
         $scope.entity = $scope.entity();
         this.$scope = $scope;
         this.$location = $location;
         this.$anchorScroll = $anchorScroll;
+        this.datastore = this.$scope.datastore();
         this.filters = {};
         this.shouldDisplayActions = this.$scope.listActions() && this.$scope.listActions().length > 0;
-
         $scope.toggleSelect = this.toggleSelect.bind(this);
         $scope.toggleSelectAll = this.toggleSelectAll.bind(this);
-
-        this.sortField = 'sortField' in $stateParams ? $stateParams.sortField : null;
-        this.sortDir = 'sortDir' in $stateParams ? $stateParams.sortDir : null;
+        $scope.sortField = $attrs.sortField;
+        $scope.sortDir = $attrs.sortDir;
+        this.sortField = 'sortField' in $stateParams ? $stateParams.sortField : $attrs.sortField;
+        this.sortDir = 'sortDir' in $stateParams ? $stateParams.sortDir : $attrs.sortDir;
+        $attrs.$observe('sortDir', sortDir => this.sortDir = sortDir);
+        $attrs.$observe('sortField', sortField => this.sortField = sortField);
+        this.sortCallback = $scope.sort() ? $scope.sort() : this.sort.bind(this);
     }
 
     /**
@@ -72,7 +76,7 @@ define(function () {
      * @returns {String}
      */
     DatagridController.prototype.getSortName = function (field) {
-        return this.$scope.name + '.' + field.name();
+        return this.$scope.name ? this.$scope.name + '.' + field.name() : field.name();
     };
 
     DatagridController.prototype.toggleSelect = function (entry) {
@@ -98,7 +102,7 @@ define(function () {
         this.$scope.selection = [];
     };
 
-    DatagridController.$inject = ['$scope', '$location', '$stateParams', '$anchorScroll'];
+    DatagridController.$inject = ['$scope', '$location', '$stateParams', '$anchorScroll', '$attrs'];
 
     return DatagridController;
 });

@@ -72,19 +72,49 @@ describe('EditionView', function () {
             browser.get(browser.baseUrl + '#/tags/edit/5');
         });
 
-        it('should render as a choice field', function () {
-            $$('.ng-admin-field-published .ui-select-container')
-            .then(function(uiSelect) {
-                expect(uiSelect.length).toBe(1)
+        it('should render as a checkbox field when required', function () {
+            $$('.ng-admin-field-published input[type="checkbox"]')
+            .then(function(checkboxes) {
+                expect(checkboxes.length).toBe(1);
+                return checkboxes[0];
+            })
+            .then(function(checkbox) {
+                expect(checkbox.getAttribute('checked')).toBe('true');
+                return checkbox.click();
             })
             .then(function() {
-                return $$('.ng-admin-field-published .btn').first().click();
+                return $$('button[type="submit"]').first().click();
             })
             .then(function() {
-                return $$('.ng-admin-field-published .ui-select-choices-row');
+                return $$('#page-wrapper .btn-default').first().click();
             })
-            .then(function(choices) {
-                expect(choices.length).toBe(3)
+            .then(function() {
+                return $$('.ng-admin-column-actions .btn-xs').get(1).click();
+            })
+            .then(function() {
+                return $$('.ng-admin-field-published input[type="checkbox"]').first();
+            })
+            .then(function(checkbox) {
+                expect(checkbox.getAttribute('checked')).toBe(null);
+            })
+        });
+    })
+
+    describe('EmbeddedListField', function() {
+        beforeEach(function() {
+            browser.get(browser.baseUrl + '#/posts/edit/1');
+        });
+
+        it('should render as a list of subforms', function () {
+            $$('.ng-admin-field-backlinks ng-form')
+            .then(function subFormsExist(subforms) {
+                expect(subforms.length).toBe(1);
+            })
+            .then(function getUrlInput() {
+                return $$('.ng-admin-field-backlinks ng-form input#url').first();
+            })
+            .then(function urlInputContainsUrl(input) {
+                expect(input.getAttribute('value')).toBe('http://example.com/bar/baz.html');
             });
         });
     })

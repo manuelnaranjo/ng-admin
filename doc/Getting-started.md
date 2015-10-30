@@ -63,7 +63,7 @@ That's enough for the first step. You should now have the following file structu
 ```
 my-first-admin/
   index.html
-  config.js
+  admin.js
   node_modules/
     ng-admin/
       build/
@@ -191,7 +191,7 @@ The good news is that the 3 fields defined on the list view are there, as header
 
 Let's look at the AJAX request made by the user list view. Open your browser developer tools (Alt+Cmd+I for Chrome), and look for the `users` request in the network tab:
 
-![Chrome Network Request]()
+![Chrome Network Request](images/empty_api_request.png)
 
 The actual request made by the browser is:
 
@@ -207,7 +207,7 @@ The `_page`, `_perPage`, `_sortDir`, and `_sortField` query parameters are added
 
 http://jsonplaceholder.typicode.com/users?_start=1&_end=30&_order=DESC&_sort=id
 
-But it's very easy to map the two flavors. Ng-admin relies on a powerful REST client called [Restangular](https://github.com/mgonto/restangular). To configure Restangular, you must write an *interceptor*, which is a simple function receiving the response from the web server and transforming it before it is passed to ng-admin. 
+But it's very easy to map the two flavors. Ng-admin relies on a powerful REST client called [Restangular](https://github.com/mgonto/restangular). To configure Restangular, you must write an *interceptor*, which is a simple function receiving the response from the web server and transforming it before it is passed to ng-admin.
 
 Here is the configuration script required to map the JSONPlaceholder REST flavor with ng-admin REST flavor:
 
@@ -314,7 +314,7 @@ nga.field('userId', 'reference')
 
 This kind of syntax (where a call on a method object returns the object) is very common in ng-admin, you will see it a lot.
 
-There are many more types in addition to the `reference` type, each with their own abilities: `string`, `text`, `wysiwyg`, `password`, `email`, `date`, `datetime`, `number`, `float`, `boolean`, `choice`, `choices`, `json`, `file`, `reference`, `reference_list`, `reference_many`, and `template`. When you don't specify the field type, it uses the `string` type by default. All filed types are documented in the [Configuration API Reference](Configuration-reference.md).
+There are many more types in addition to the `reference` type, each with their own abilities: `string`, `text`, `wysiwyg`, `password`, `email`, `date`, `datetime`, `number`, `float`, `boolean`, `choice`, `choices`, `json`, `file`, `reference`, `reference_list`, and `reference_many`. When you don't specify the field type, it uses the `string` type by default. All filed types are documented in the [Configuration API Reference](Configuration-reference.md).
 
 While talking about references, let's display the list of comments for a given post. The `post` entity doesn't have a detail view for now. Instead of an edition view, and for the sake of this example, you will create a showView. It's a non-editable detail view, good for read only entities.
 
@@ -342,7 +342,7 @@ The `referenced_list` field type displays a datagrid for one-to-many relationshi
 
 As a side note, you can see that it's possible to create a reference to a non-existent entity (`nga.entity('comments)` creates the related entity for the occasion).
 
-The new post show view is directly accessible from the listView, by clicking on the id of a post in the list. 
+The new post show view is directly accessible from the listView, by clicking on the id of a post in the list.
 
 ![post show view with related comments](images/post_show_view_with_related_comments.png)
 
@@ -458,7 +458,7 @@ user.editionView().fields(user.creationView().fields());
 
 ![customized validation in post edition view](images/customized_validation_in_post_edition_view.png)
 
-**Tip**: Fields can use custom directives (see the section about the template field type below), so you can even create complex validation rules using `$validators` and `$asyncValidators`.
+**Tip**: Fields can use custom directives (see the section about the template method type below), so you can even create complex validation rules using `$validators` and `$asyncValidators`.
 
 ## Making Lists Searchable With Filters
 
@@ -500,14 +500,14 @@ Browse to the posts list, and you will see the full-text filter displayed on the
 
 **Note**: We've used the same `nga.field()` to configure columns in a list, form inputs in an edition form, and search widgets in a filter form. At that point, you may wonder: what is a *field* exactly? That's one of the strength of ng-admin: it provides a set of field types with predefined behavior for each view. A `date` type, for instance, will render in list views as a formatted date, in edition views and filters as a date widget. This allows you to reuse the same field definition across several views, and define custom types. See the [Custom types chapter](Custom-types.md) for more details.
 
-## Using Angular Directives With The Template Field Type
+## Using Angular Directives With The Template Method
 
 The full-text search isn't looking very good. Usually, a full-text filter widget has no label, a placeholder simply saying "Search", and a magnifying glass icon. How can you turn the current full-text input into that UI?
 
-Fortunately, ng-admin fields can benefit from the power of Angular.Js directives. Using the 'template' field type, you can specify the HTML template to use for rendering the field. And you can use any directive already registered in that HTML. Update the `nga.field('q')` definition as follows:
+Fortunately, every ng-admin field can benefit from the power of Angular.js directives. Using the `template()` field method, you can specify the HTML template to use for rendering the field. And you can use any directive already registered in that application. Update the `nga.field('q')` definition as follows:
 
 ```js
-        nga.field('q', 'template')
+        nga.field('q')
             .label('')
             .pinned(true)
             .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>'),
@@ -527,7 +527,7 @@ The post show view still contains a 'delete' button. Assuming it's read only, en
 post.readOnly();
 ```
 
-Also, let's modify the posts list view to remove the `id` field (it doesn't provide relevant information). Since end users still need a way to reach the posts show view from the list view, add a 'show' button on every line by using the `listActions()` method. 
+Also, let's modify the posts list view to remove the `id` field (it doesn't provide relevant information). Since end users still need a way to reach the posts show view from the list view, add a 'show' button on every line by using the `listActions()` method.
 
 Add a glimpse of the post body in the list by adding a `body` column, but truncated to 50 characters max. How can you truncate a field ? Use the `map()` function, which accepts a function transforming the input before it's displayed. Oh, and this first column made of checkboxes (allowing selection for batch actions) doesn't make sense anymore for read-only posts. Remove it by adding `batchActions([])`.
 
@@ -570,9 +570,9 @@ You can do much more to customize the look and feel of an ng-admin application -
 
 ## Customizing the Sidebar Menu
 
-The sidebar menu automatically shows one item for each entity added to the admin app by default. That may or may not be what you want. The good news is this menu is entirely configurable. 
+The sidebar menu automatically shows one item for each entity added to the admin app by default. That may or may not be what you want. The good news is this menu is entirely configurable.
 
-To demonstrate it, let's customize the icons for each entity. Add the following code at the end of the `config.js` script, just before the call to `nga.configure()`:
+To demonstrate it, let's customize the icons for each entity. Add the following code at the end of the `admin.js` script, just before the call to `nga.configure()`:
 
 ```js
 admin.menu(nga.menu()
@@ -591,9 +591,9 @@ And if you feel like customizing the home page of the admin app, check out the [
 
 ## Conclusion
 
-That's it, you already have a working graphical user interface allowing complete CRUD operations based on the `/users` API endpoint! You've also learned the basics about ng-admin.
+That's it: you've just built a working GUI allowing complete CRUD operations, based on a REST API! You've also learned the basics about ng-admin.
 
-To continue, take a look at a more complete backend in the [blog admin example](examples/blog/config.js), or dive in the [Configuration API reference](Configuration-referend.md).
+To continue, take a look at a more complete backend in the [usage examples](Usage-example.md), or learn the details about [API mapping](API-mapping.md).
 
 **Tip**: Here is the `admin.js` source at the end of this tutorial.
 
@@ -653,7 +653,7 @@ myApp.config(['NgAdminConfigurationProvider', function (nga) {
         .listActions(['show'])
         .batchActions([])
         .filters([
-            nga.field('q', 'template')
+            nga.field('q')
                 .label('')
                 .pinned(true)
                 .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>'),

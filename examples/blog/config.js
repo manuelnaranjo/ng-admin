@@ -1,23 +1,32 @@
 /*global angular*/
+
+/*
+ * This is an example ng-admin configuration for a blog administration composed
+ * of three entities: post, comment, and tag. Reading the code and the comments
+ * will help you understand how a typical ng-admin application works. You can
+ * browse the result online at http://ng-admin.marmelab.com.
+ *
+ * The remote REST API is simulated in the browser, using FakeRest
+ * (https://github.com/marmelab/FakeRest). Look at the JSON responses in the
+ * browser console to see the data used by ng-admin.
+ *
+ * For simplicity's sake, the entire configuration is written in a single file,
+ * but in a real world situation, you would probably split that configuration
+ * into one file per entity. For another example configuration on a larger set
+ * of entities, and using the best development practices, check out the
+ * Posters Galore demo (http://marmelab.com/ng-admin-demo/).
+ */
 (function () {
     "use strict";
 
     var app = angular.module('myApp', ['ng-admin']);
 
-    app.config(['NgAdminConfigurationProvider', 'RestangularProvider', function (NgAdminConfigurationProvider, RestangularProvider) {
-        var nga = NgAdminConfigurationProvider;
-
-        function truncate(value) {
-            if (!value) {
-                return '';
-            }
-
-            return value.length > 50 ? value.substr(0, 50) + '...' : value;
-        }
+    // API Mapping
+    app.config(['RestangularProvider', function (RestangularProvider) {
 
         // use the custom query parameters function to format the API request correctly
         RestangularProvider.addFullRequestInterceptor(function(element, operation, what, url, headers, params) {
-            if (operation == "getList") {
+            if (operation === 'getList') {
                 // custom pagination params
                 if (params._page) {
                     var start = (params._page - 1) * params._perPage;
@@ -41,7 +50,7 @@
             return { params: params };
         });
 
-        RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response, deferred) {
+        RestangularProvider.addResponseInterceptor(function(data, operation, what, url, response) {
             if (operation === "getList") {
                 var headers = response.headers();
                 if (headers['content-range']) {
@@ -51,6 +60,19 @@
 
             return data;
         });
+    }]);
+
+    // Admin definition
+    app.config(['NgAdminConfigurationProvider', function (NgAdminConfigurationProvider) {
+        var nga = NgAdminConfigurationProvider;
+
+        function truncate(value) {
+            if (!value) {
+                return '';
+            }
+
+            return value.length > 50 ? value.substr(0, 50) + '...' : value;
+        }
 
         var admin = nga.application('ng-admin backend demo') // application main title
             .debug(false) // debug disabled
@@ -80,6 +102,10 @@
             .addEntity(comment);
 
         // customize entities and views
+
+        /*****************************
+         * post entity customization *
+         *****************************/
         post.listView()
             .title('All posts') // default title is "[Entity_name] list"
             .description('List of posts with infinite pagination') // description appears under the title
@@ -88,11 +114,19 @@
                 nga.field('id').label('id'), // The default displayed name is the camelCase field name. label() overrides id
                 nga.field('title'), // the default list field type is "string", and displays as a string
                 nga.field('published_at', 'date'),  // Date field type allows date formatting
-                nga.field('average_note', 'float'), // Float type also displays decimal digits
-                nga.field('views', 'number'),
+                nga.field('average_note', 'float') // Float type also displays decimal digits
+                    .cssClasses('hidden-xs'),
+                nga.field('views', 'number')
+                    .cssClasses('hidden-xs'),
+                nga.field('backlinks', 'embedded_list') // display list of related comments
+                    .label('Links')
+                    .map(links => links ? links.length : '')
+                    .template('{{ value }}'),
                 nga.field('tags', 'reference_many') // a Reference is a particular type of field that references another entity
                     .targetEntity(tag) // the tag entity is defined later in this file
                     .targetField(nga.field('name')) // the field to be displayed in this list
+                    .cssClasses('hidden-xs')
+                    .singleApiCall(ids => { return {'id': ids }; })
             ])
             .filters([
                 nga.field('category', 'choice').choices([
@@ -137,12 +171,21 @@
                         refreshDelay: 300 ,
                         searchQuery: function(search) { return { q: search }; }
                     })
+                    .singleApiCall(ids => { return {'id': ids }; })
                     .cssClasses('col-sm-4'), // customize look and feel through CSS classes
                 nga.field('pictures', 'json'),
                 nga.field('views', 'number')
                     .cssClasses('col-sm-4'),
                 nga.field('average_note', 'float')
                     .cssClasses('col-sm-4'),
+                nga.field('backlinks', 'embedded_list') // display embedded list
+                    .targetFields([
+                        nga.field('date', 'datetime'),
+                        nga.field('url')
+                            .cssClasses('col-lg-10')
+                    ])
+                    .sortField('date')
+                    .sortDir('DESC'),
                 nga.field('comments', 'referenced_list') // display list of related comments
                     .targetEntity(nga.entity('comments'))
                     .targetReferenceField('post_id')
@@ -154,20 +197,53 @@
                     .sortField('created_at')
                     .sortDir('DESC')
                     .listActions(['edit']),
-                nga.field('', 'template').label('')
-                    .template('<span class="pull-right"><ma-filtered-list-button entity-name="comments" filter="{ post_id: entry.values.id }" size="sm"></ma-filtered-list-button></span>')
+                nga.field('').label('')
+                    .template('<span class="pull-right"><ma-filtered-list-button entity-name="comments" filter="{ post_id: entry.values.id }" size="sm"></ma-filtered-list-button><ma-create-button entity-name="comments" size="sm" label="Create related comment" default-values="{ post_id: entry.values.id }"></ma-create-button></span>')
             ]);
 
         post.showView() // a showView displays one entry in full page - allows to display more data than in a a list
             .fields([
                 nga.field('id'),
-                post.editionView().fields(), // reuse fields from another view in another order
-                nga.field('custom_action', 'template')
-                    .label('')
+                nga.field('category', 'choice') // a choice field is rendered as a dropdown in the edition view
+                    .choices([ // List the choice as object literals
+                        { label: 'Tech', value: 'tech' },
+                        { label: 'Lifestyle', value: 'lifestyle' }
+                    ]),
+                nga.field('subcategory', 'choice')
+                    .choices(subCategories),
+                nga.field('tags', 'reference_many') // ReferenceMany translates to a select multiple
+                    .targetEntity(tag)
+                    .targetField(nga.field('name')),
+                nga.field('pictures', 'json'),
+                nga.field('views', 'number'),
+                nga.field('average_note', 'float'),
+                nga.field('backlinks', 'embedded_list') // display embedded list
+                    .targetFields([
+                        nga.field('date', 'datetime'),
+                        nga.field('url')
+                    ])
+                    .sortField('date')
+                    .sortDir('DESC'),
+                nga.field('comments', 'referenced_list') // display list of related comments
+                    .targetEntity(nga.entity('comments'))
+                    .targetReferenceField('post_id')
+                    .targetFields([
+                        nga.field('id').isDetailLink(true),
+                        nga.field('created_at').label('Posted'),
+                        nga.field('body').label('Comment')
+                    ])
+                    .sortField('created_at')
+                    .sortDir('DESC')
+                    .listActions(['edit']),
+                nga.field('').label('')
+                    .template('<span class="pull-right"><ma-filtered-list-button entity-name="comments" filter="{ post_id: entry.values.id }" size="sm"></ma-filtered-list-button><ma-create-button entity-name="comments" size="sm" label="Create related comment" default-values="{ post_id: entry.values.id }"></ma-create-button></span>'),
+                nga.field('custom_action').label('')
                     .template('<send-email post="entry"></send-email>')
             ]);
 
-
+        /********************************
+         * comment entity customization *
+         ********************************/
         comment.listView()
             .title('Comments')
             .perPage(10) // limit the number of elements displayed per page. Default is 30.
@@ -175,7 +251,8 @@
                 nga.field('created_at', 'date')
                     .label('Posted'),
                 nga.field('author.name')
-                    .label('Author'),
+                    .label('Author')
+                    .cssClasses('hidden-xs'),
                 nga.field('body', 'wysiwyg')
                     .stripTags(true)
                     .map(truncate),
@@ -183,12 +260,16 @@
                     .label('Post')
                     .targetEntity(post)
                     .targetField(nga.field('title').map(truncate))
+                    .cssClasses('hidden-xs')
+                    .singleApiCall(ids => { return {'id': ids }; })
             ])
             .filters([
-                nga.field('q', 'template')
+                nga.field('q')
                     .label('')
                     .pinned(true)
-                    .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>'),
+                    .template('<div class="input-group"><input type="text" ng-model="value" placeholder="Search" class="form-control"></input><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span></div>')
+                    .transform(v => v && v.toUpperCase()) // transform the entered value before sending it as a query parameter
+                    .map(v => v && v.toLowerCase()), // map the query parameter to a displayed value in the filter form
                 nga.field('created_at', 'date')
                     .label('Posted')
                     .attributes({'placeholder': 'Filter by date'}),
@@ -226,33 +307,39 @@
 
         comment.editionView()
             .fields(comment.creationView().fields())
-            .fields([nga.field(null, 'template')
-                .label('')
-                .template('<post-link entry="entry"></post-link>') // template() can take a function or a string
+            .fields([
+                nga.field('').label('')
+                    .template('<post-link entry="entry"></post-link>') // template() can take a function or a string
             ]);
 
         comment.deletionView()
             .title('Deletion confirmation'); // customize the deletion confirmation message
 
-
+        /****************************
+         * tag entity customization *
+         ****************************/
         tag.listView()
             .infinitePagination(false) // by default, the list view uses infinite pagination. Set to false to use regulat pagination
             .fields([
                 nga.field('id').label('ID'),
                 nga.field('name'),
                 nga.field('published', 'boolean').cssClasses(function(entry) { // add custom CSS classes to inputs and columns
-                    if (entry.values.published) {
-                        return 'bg-success text-center';
+                    if(entry && entry.values){
+                        if (entry.values.published) {
+                            return 'bg-success text-center';
+                        }
+                        return 'bg-warning text-center';
                     }
-                    return 'bg-warning text-center';
                 }),
-                nga.field('custom', 'template')
+                nga.field('custom')
                     .label('Upper name')
                     .template('{{ entry.values.name.toUpperCase() }}')
+                    .cssClasses('hidden-xs')
             ])
             .filters([
-                nga.field('published', 'template')
+                nga.field('published')
                     .label('Not yet published')
+                    .template(' ')
                     .defaultValue(false)
             ])
             .batchActions([]) // disable checkbox column and batch delete
@@ -261,9 +348,10 @@
         tag.editionView()
             .fields([
                 nga.field('name'),
-                nga.field('published', 'boolean')
-                    .choices([{ value: null, label: 'null' }, { value: true, label: 'yes'}, {value: false,label: 'no' }])
-            ])
+                nga.field('published', 'boolean').validation({
+                    required: true // as this boolean is required, ng-admin will use a checkbox instead of a dropdown
+                })
+            ]);
 
         tag.showView()
             .fields([
@@ -274,9 +362,14 @@
         // customize header
         var customHeaderTemplate =
         '<div class="navbar-header">' +
+            '<button type="button" class="navbar-toggle" ng-click="isCollapsed = !isCollapsed">' +
+              '<span class="icon-bar"></span>' +
+              '<span class="icon-bar"></span>' +
+              '<span class="icon-bar"></span>' +
+            '</button>' +
             '<a class="navbar-brand" href="#" ng-click="appController.displayHome()">ng-admin backend demo</a>' +
         '</div>' +
-        '<p class="navbar-text navbar-right">' +
+        '<p class="navbar-text navbar-right hidden-xs">' +
             '<a href="https://github.com/marmelab/ng-admin/blob/master/examples/blog/config.js"><span class="glyphicon glyphicon-sunglasses"></span>&nbsp;View Source</a>' +
         '</p>';
         admin.header(customHeaderTemplate);
@@ -300,22 +393,22 @@
         '<div class="row dashboard-content">' +
             '<div class="col-lg-12">' +
                 '<div class="panel panel-default">' +
-                    '<ma-dashboard-panel collection="dashboardController.collections.comments" entries="dashboardController.entries.comments"></ma-dashboard-panel>' +
+                    '<ma-dashboard-panel collection="dashboardController.collections.comments" entries="dashboardController.entries.comments" datastore="dashboardController.datastore"></ma-dashboard-panel>' +
                 '</div>' +
             '</div>' +
         '</div>' +
         '<div class="row dashboard-content">' +
             '<div class="col-lg-6">' +
                 '<div class="panel panel-green">' +
-                    '<ma-dashboard-panel collection="dashboardController.collections.recent_posts" entries="dashboardController.entries.recent_posts"></ma-dashboard-panel>' +
+                    '<ma-dashboard-panel collection="dashboardController.collections.recent_posts" entries="dashboardController.entries.recent_posts" datastore="dashboardController.datastore"></ma-dashboard-panel>' +
                 '</div>' +
                 '<div class="panel panel-green">' +
-                    '<ma-dashboard-panel collection="dashboardController.collections.popular_posts" entries="dashboardController.entries.popular_posts"></ma-dashboard-panel>' +
+                    '<ma-dashboard-panel collection="dashboardController.collections.popular_posts" entries="dashboardController.entries.popular_posts" datastore="dashboardController.datastore"></ma-dashboard-panel>' +
                 '</div>' +
             '</div>' +
             '<div class="col-lg-6">' +
                 '<div class="panel panel-yellow">' +
-                    '<ma-dashboard-panel collection="dashboardController.collections.tags" entries="dashboardController.entries.tags"></ma-dashboard-panel>' +
+                    '<ma-dashboard-panel collection="dashboardController.collections.tags" entries="dashboardController.entries.tags" datastore="dashboardController.datastore"></ma-dashboard-panel>' +
                 '</div>' +
             '</div>' +
         '</div>';
@@ -389,7 +482,7 @@
             template: '<p class="form-control-static"><a ng-click="displayPost()">View&nbsp;post</a></p>',
             link: function (scope) {
                 scope.displayPost = function () {
-                    $location.path('/posts/show/' + scope.entry().values.post_id);
+                    $location.path('/posts/show/' + scope.entry().values.post_id); // jshint ignore:line
                 };
             }
         };

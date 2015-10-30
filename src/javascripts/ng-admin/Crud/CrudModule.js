@@ -27,6 +27,7 @@ CrudModule.directive('maButtonField', require('./field/maButtonField'));
 CrudModule.directive('maChoiceField', require('./field/maChoiceField'));
 CrudModule.directive('maChoicesField', require('./field/maChoicesField'));
 CrudModule.directive('maDateField', require('./field/maDateField'));
+CrudModule.directive('maEmbeddedListField', require('./field/maEmbeddedListField'));
 CrudModule.directive('maInputField', require('./field/maInputField'));
 CrudModule.directive('maJsonField', require('./field/maJsonField'));
 CrudModule.directive('maFileField', require('./field/maFileField'));
@@ -46,6 +47,7 @@ CrudModule.directive('maDatagridPagination', require('./list/maDatagridPaginatio
 CrudModule.directive('maDatagridInfinitePagination', require('./list/maDatagridInfinitePagination'));
 CrudModule.directive('maDatagridItemSelector', require('./list/maDatagridItemSelector'));
 CrudModule.directive('maDatagridMultiSelector', require('./list/maDatagridMultiSelector'));
+CrudModule.directive('maFilterForm', require('./filter/maFilterForm'));
 CrudModule.directive('maFilter', require('./filter/maFilter'));
 CrudModule.directive('maFilterButton', require('./filter/maFilterButton'));
 
@@ -53,8 +55,10 @@ CrudModule.directive('maColumn', require('./column/maColumn'));
 CrudModule.directive('maBooleanColumn', require('./column/maBooleanColumn'));
 CrudModule.directive('maChoicesColumn', require('./column/maChoicesColumn'));
 CrudModule.directive('maDateColumn', require('./column/maDateColumn'));
+CrudModule.directive('maEmbeddedListColumn', require('./column/maEmbeddedListColumn'));
 CrudModule.directive('maJsonColumn', require('./column/maJsonColumn'));
 CrudModule.directive('maNumberColumn', require('./column/maNumberColumn'));
+CrudModule.directive('maReferenceColumn', require('./column/maReferenceColumn'));
 CrudModule.directive('maReferencedListColumn', require('./column/maReferencedListColumn'));
 CrudModule.directive('maReferenceManyColumn', require('./column/maReferenceManyColumn'));
 CrudModule.directive('maReferenceManyLinkColumn', require('./column/maReferenceManyLinkColumn'));
