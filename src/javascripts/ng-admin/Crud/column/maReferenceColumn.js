@@ -19,7 +19,7 @@ function maReferenceColumn() {
                     .pop();
             }
         },
-        template: '<ma-column field="::targetField" entry="::referencedEntry" entity="::targetEntity" datastore="::datastore()"></ma-column>'
+        template: '<ma-column field="::targetField" entry="::referencedEntry" entity="::targetEntity" datastore="::datastore()" tooltip="{{::targetField.getTooltip(referencedEntry)}}"></ma-column>'
     };
 }
 

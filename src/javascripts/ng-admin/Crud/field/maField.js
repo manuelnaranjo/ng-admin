@@ -49,7 +49,7 @@ function maField(FieldViewConfiguration, $compile) {
             var fieldTemplate;
             if (scope.field.editable()) {
                 fieldTemplate =
-`<div ng-class="getClassesForField(field, entry)">
+`<div ng-class="getClassesForField(field, entry)" tooltip="{{::field.getTooltip(value)}}">
     ${scope.field.getTemplateValue(scope.entry) || FieldViewConfiguration[scope.type].getWriteWidget()}
     <span ng-show="fieldHasValidation(field)" class="glyphicon form-control-feedback" ng-class="fieldIsValid(field) ? 'glyphicon-ok' : 'glyphicon-remove'"></span>
 </div>`;
@@ -57,7 +57,7 @@ function maField(FieldViewConfiguration, $compile) {
                 fieldTemplate =
 `<div ng-class="field.getCssClasses(entry)||'col-sm-10'">
     <p class="form-control-static">
-        <ma-column field="::field" entry="::entry" entity="::entity" datastore="::datastore"></ma-column>
+        <ma-column field="::field" entry="::entry" entity="::entity" datastore="::datastore" tooltip="{{::field.getTooltip(entry)}}"></ma-column>
     </p>
 </div>`;
             }

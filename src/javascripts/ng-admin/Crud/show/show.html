@@ -23,7 +23,7 @@
         <label class="col-sm-2 control-label" ng-if="!field.isFieldset()">{{ field.label() }}</label>
 
         <div ng-if="!field.isFieldSet()" class="show-value" ng-class="::'ng-admin-field-' + field.name() + ' ' + 'ng-admin-type-' + field.type() + ' ' + (field.getCssClasses(entry) || 'col-sm-10 col-md-8 col-lg-7')">
-            <ma-column field="::field" entry="::entry" entity="::showController.entity" datastore="::showController.dataStore"></ma-column>
+            <ma-column field="::field" entry="::entry" entity="::showController.entity" datastore="::showController.dataStore" tooltip="{{::field.getTooltip(entry)}}"></ma-column>
         </div>
 
         <fieldset ng-if="field.isFieldset()">
@@ -32,7 +32,7 @@
                 <div ng-repeat="rowField in ::row.fields()" class="form-group" ng-class="::row.cssSpanClass(rowField)">
                     <label for="::{{ rowField.name() }}">{{ rowField.label() }}</label>
                     <div class="form-control">
-                        <ma-column field="::rowField" entry="::entry" entity="::showController.entity" datastore="::showController.dataStore"></ma-column>
+                        <ma-column field="::rowField" entry="::entry" entity="::showController.entity" datastore="::showController.dataStore" tooltip="{{::field.getTooltip(entry)}}"></ma-column>
                     </div>
                 </div>
             </div>
