@@ -53,6 +53,14 @@ export default class NgAdminConfiguration {
     dashboard(dashboard) {
         return this.adminDescription.dashboard(dashboard);
     }
+
+    row(fields) {
+        return this.adminDescription.row().fields(fields);
+    }
+
+    fieldset(name) {
+        return this.adminDescription.fieldset(name);
+    }
 }
 
 NgAdminConfiguration.$inject = ['$compileProvider'];
