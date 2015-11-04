@@ -1,4 +1,4 @@
-var angular = require('angular');
+import angular from 'angular';
 
 var CrudModule = angular.module('crud', [
     'ui.router', 'ui.bootstrap', 'ngSanitize', 'textAngular', 'ngInflection', 'ui.codemirror', 'ngFileUpload', 'ngNumeraljs'
@@ -98,4 +98,8 @@ CrudModule.factory('progression', function () {
     return require('nprogress');
 });
 
-module.exports = CrudModule;
+CrudModule.run(['Restangular', 'NgAdminConfiguration', function(Restangular, NgAdminConfiguration) {
+    Restangular.setBaseUrl(NgAdminConfiguration().baseApiUrl());
+}]);
+
+export default CrudModule;
