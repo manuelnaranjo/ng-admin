@@ -49,7 +49,7 @@ export default class FormController {
         var route = !entity.editionView().enabled ? 'show' : 'edit';
         var restEntry = this.$scope.entry.transformToRest(view.fields());
         this.progression.start();
-        this.WriteQueries
+        return this.WriteQueries
             .createOne(view, restEntry)
             .then(rawEntry => {
                 this.progression.done();
@@ -67,7 +67,7 @@ export default class FormController {
         var view = this.view;
         var restEntry = this.$scope.entry.transformToRest(view.fields());
         this.progression.start();
-        this.WriteQueries
+        return this.WriteQueries
             .updateOne(view, restEntry, this.originEntityId)
             .then(() => {
                 this.progression.done();
