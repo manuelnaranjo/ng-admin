@@ -4,9 +4,11 @@ export default function maFilterButton() {
         scope: {
             filters: '&',
             enabledFilters: '=',
-            enableFilter: '&'
+            enableFilter: '&',
+            label: '@'
         },
         link: function(scope) {
+            scope.label = scope.label || 'Add filter';
             scope.notYetEnabledFilters = () => scope.filters().filter(filter =>
                 scope.enabledFilters.indexOf(filter) === -1
             );
@@ -15,7 +17,7 @@ export default function maFilterButton() {
         template:
 `<span class="btn-group" dropdown is-open="isopen" ng-if="hasFilters()">
     <button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle >
-        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>&nbsp;<span class="hidden-xs">Add filter </span><span class="caret"></span>
+        <span class="glyphicon glyphicon-filter" aria-hidden="true"></span>&nbsp;<span class="hidden-xs">{{ ::label }} </span><span class="caret"></span>
     </button>
     <ul class="dropdown-menu" role="menu">
         <li ng-repeat="filter in notYetEnabledFilters()" ng-switch="button">
