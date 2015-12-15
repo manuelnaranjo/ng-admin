@@ -56,6 +56,7 @@ export default class FormController {
                 this.notification.log('Element successfully created.', { addnCls: 'humane-flatty-success' });
                 var entry = view.mapEntry(rawEntry);
                 this.$state.go(this.$state.get(route), { entity: entity.name(), id: entry.identifierValue });
+                return true;
             }, this.handleError.bind(this));
     }
 
@@ -72,6 +73,7 @@ export default class FormController {
             .then(() => {
                 this.progression.done();
                 this.notification.log('Changes successfully saved.', { addnCls: 'humane-flatty-success' });
+                return true;
             }, this.handleError.bind(this));
     }
 
@@ -85,6 +87,7 @@ export default class FormController {
 
         this.progression.done();
         this.notification.log(errorMessage, {addnCls: 'humane-flatty-error'});
+        return false;
     }
 
     destroy() {
