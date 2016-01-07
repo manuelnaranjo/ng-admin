@@ -135,7 +135,10 @@
                 ]).label('Category'),
                 nga.field('subcategory', 'choice').choices(subCategories).label('Subcategory')
             ])
-            .listActions(['show', 'edit', 'delete']);
+            .listActions(['show', 'edit', 'delete'])
+            .entryCssClasses(function(entry) { // set row class according to entry
+                return (entry.views > 300) ? 'is-popular' : '';
+            });
 
         post.creationView()
             .fields([
@@ -162,7 +165,8 @@
                         return subCategories.filter(function (c) {
                             return c.category === entry.values.category;
                         });
-                    }),
+                    })
+                    .template('<ma-field ng-if="entry.values.category" field="::field" value="entry.values[field.name()]" entry="entry" entity="::entity" form="formController.form" datastore="::formController.dataStore"></ma-field>', true),
                 nga.field('tags', 'reference_many') // ReferenceMany translates to a select multiple
                     .targetEntity(tag)
                     .targetField(nga.field('name'))

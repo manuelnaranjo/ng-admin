@@ -12,7 +12,7 @@ A field is the representation of a property of an entity.
 * [`datetime` Field Type](#-datetime-field-type)
 * [`number` Field Type](#-number-field-type)
 * `float` Field Type
-* `boolean` Field Type
+* [`boolean` Field Type](#-boolean-field-type)
 * [`choice` and `choices` Field Types](#-choice-and-choices-field-types)
 * `json` Field Type
 * [`file` Field Type](#-file-field-type)
@@ -122,14 +122,14 @@ A list of CSS classes to be added to the corresponding field. If you provide a f
 
         nga.field('title')
             .cssClasses(function(entry) {
-                if(entry) {
+                if (entry) {
                     return entry.values.needsAttention ? 'bg-warning' : '';
                 }
 
                 return 'my-custom-css-class-for-list-header';
             });
 
-* `template(String|Function)`
+* `template(String|Function, templateIncludesLabel=false)`
 All field types support the `template()` method, which makes it easy to customize the look and feel of a particular field, without sacrificing the native features.
 
     For instance, if you want to customize the appearance of a `NumberField` according to its value:
@@ -146,7 +146,26 @@ All field types support the `template()` method, which makes it easy to customiz
     - `value`, `field`, `values`, and `datastore` in filters
     - `value`, `field`, `entry`, `entity`, `form`, and `datastore` in `editionView` and `creationView`
 
-    Most of the time, `template()` is used to customize the existing ng-admin directives (like `ma-number-column>` in the previous example), for instance by decorating them. If you want to learn about these native directives, explore the [column](../src/javascripts/ng-admin/crud/column), [field](../src/javascripts/ng-admin/crud/field), and [fieldView](../src/javascripts/ng-admin/crud/fieldView) directories in ng-admin source.
+    In `showView`, `editionView`, and `creationView`, the template zone covers only the field itself - not the label. To force the template to replace the entire line (including the label), pass `true` as second argument to the `template()` call. This can be very useful to conditionally hide a field according to a property of the entry:
+
+        post.editionView()
+            .fields([
+                nga.field('category', 'choice')
+                    .choices([
+                        { label: 'Tech', value: 'tech' },
+                        { label: 'Lifestyle', value: 'lifestyle' }
+                    ]),
+                nga.field('subcategory', 'choice')
+                    .choices(function(entry) {
+                        return subCategories.filter(function (c) {
+                            return c.category === entry.values.category;
+                        });
+                    })
+                    // display subcategory only if there is a category
+                    .template('<ma-field ng-if="entry.values.category" field="::field" value="entry.values[field.name()]" entry="entry" entity="::entity" form="formController.form" datastore="::formController.dataStore"></ma-field>', true),
+            ]);
+
+    Most of the time, `template()` is used to customize the existing ng-admin directives (like `<ma-number-column>` in the previous example), for instance by decorating them. If you want to learn about these native directives, explore the [column](../src/javascripts/ng-admin/crud/column), [field](../src/javascripts/ng-admin/crud/field), and [fieldView](../src/javascripts/ng-admin/crud/fieldView) directories in ng-admin source.
 
 * `defaultValue(*)`
 Define the default value of the field in the creation form.
@@ -213,6 +232,22 @@ Array of choices used for the boolean values. By default:
                 { value: true, label: 'enabled' },
                 { value: false, label: 'disabled' }
             ]);
+
+* `filterChoices(array)`
+Array of choices used for the boolean proposed values in a filter. By default:
+
+        [
+            { value: true, label: 'true' },
+            { value: false, label: 'false' }
+        ]
+
+    Override it with custom labels to fit your needs:
+
+    nga.fields('power_user', 'boolean')
+        .filterChoices([
+            { value: true, label: 'enabled' },
+            { value: false, label: 'disabled' }
+        ]);
 
 ## `choice` and `choices` Field Types
 
@@ -480,7 +515,7 @@ post.editionView().fields([
 ]);
 ```
 
-As such, a `referenced_lists` field is the opposite of a `reference` field. `referenced_lists` fields are not editable (because the relationship is the other entity's responsibility), so they render the same in all contexts: as a datagrid. However, they are only useful in `showView` and `editionView` (you can't display a datagrid in a datagrid, so this excludes the `listView`, and you can't fetch related entities to a non-existent entity, so this excludes the `creationView`). For that field, ng-admin fetches the related entities in a single query with a filter:
+As such, a `referenced_list` field is the opposite of a `reference` field. `referenced_list` fields are not editable (because the relationship is the other entity's responsibility), so they render the same in all contexts: as a datagrid. However, they are only useful in `showView` and `editionView` (you can't display a datagrid in a datagrid, so this excludes the `listView`, and you can't fetch related entities to a non-existent entity, so this excludes the `creationView`). For that field, ng-admin fetches the related entities in a single query with a filter:
 
 ```
 GET /posts/456 <= get the main entity
@@ -659,7 +694,7 @@ var comment = nga.entity('comments');
 post.editionView().fields([
     nga.field('comments', 'reference_many') // Define a 1-N relationship with the comment entity
         .targetEntity(comment) // Target the comment Entity
-        .targetFieldField('body') // the field of the comment entity to use as representation
+        .targetField('body') // the field of the comment entity to use as representation
 ]);
 ```
 

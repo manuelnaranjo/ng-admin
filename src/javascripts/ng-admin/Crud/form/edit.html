@@ -6,7 +6,7 @@
                 <ma-delete-button ng-if="::entity.deletionView().enabled" entry="entry" entity="::entity"></ma-delete-button>
             </ma-view-actions>
             <h1 compile="::formController.title">
-                Edit {{ ::formController.entity.name() | humanize:true | singularize }}  #{{ ::entry.identifierValue }}
+                Edit {{ ::formController.entity.label() | humanize:true | singularize }}  #{{ ::entry.identifierValue }}
             </h1>
             <p class="lead" ng-if="::formController.description" compile="::formController.description">{{ ::formController.description }}</p>
         </div>
@@ -15,18 +15,8 @@
 
 <div class="row" id="edit-view" ng-class="::'ng-admin-entity-' + formController.entity.name()">
     <form class="col-lg-12 form-horizontal" name="formController.form" ng-submit="formController.submitEdition($event)">
-        <div ng-repeat="field in ::formController.fields track by $index">
-            <div class="form-field form-group" ng-if="!field.isFieldset()">
-                <ma-field field="::field" value="entry.values[field.name()]" entry="entry" entity="::entity" form="formController.form" datastore="::formController.dataStore"></ma-field>
-            </div>
-            <fieldset ng-if="field.isFieldset()">
-                <legend>{{::field.label()}}</legend>
-                <div ng-repeat="row in ::field.rows()" class="row-fluid" ng-class="::row.getCssClasses()">
-                    <div ng-repeat="rowField in ::row.fields()" class="form-field form-group" ng-class="::row.editCssSpanClass(rowField)">
-                        <ma-field field="::rowField" value="entry.values[rowField.name()]" entry="entry" entity="::entity" form="formController.form" datastore="::formController.dataStore"></ma-field>
-                    </div>
-                </div>
-            </fieldset>
+        <div ng-repeat="field in ::formController.fields track by $index" compile="::field.getTemplateValueWithLabel(entry)">
+            <ma-field field="::field" value="entry.values[field.name()]" entry="entry" entity="::entity" form="formController.form" datastore="::formController.dataStore"></ma-field>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

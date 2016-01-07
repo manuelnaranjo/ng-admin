@@ -41,7 +41,7 @@ export default function maColumn($state, $anchorScroll, $compile, Configuration,
                 : scope.entry.values[scope.field.name()];
             scope.entity = scope.entity();
             let customTemplate = scope.field.getTemplateValue(scope.entry);
-            if (customTemplate) {
+            if (customTemplate && !scope.field.templateIncludesLabel()) {
                 element.append(customTemplate);
             } else {
                 let type = scope.field.type();
@@ -61,48 +61,13 @@ export default function maColumn($state, $anchorScroll, $compile, Configuration,
                     element.children().attr('ng-href', '{{::getReference()}}');
                 }
             }
+            scope.detailState = getDetailLinkRouteName(scope.field, scope.entity);
+            scope.detailStateParams = {
+                ...$state.params,
+                entity: scope.entry.entityName,
+                id: scope.entry.identifierValue,
+            };
             $compile(element.contents())(scope);
-            scope.gotoDetail = function () {
-                var route = getDetailLinkRouteName(scope.field, scope.entity);
-                $state.go($state.get(route),
-                angular.extend({}, $state.params, {
-                    entity: scope.entry.entityName,
-                    id: scope.entry.identifierValue
-                }));
-            };
-            scope.gotoReference = function () {
-                var referenceEntity = scope.field.targetEntity().name();
-                var relatedEntity = Configuration().getEntity(referenceEntity);
-                var referenceId;
-
-                if (scope.field.type() !== 'nested_reference') {
-                    referenceId = scope.entry.values[scope.field.name()];
-                } else {
-                    console.log('nested id');
-                    referenceId = scope.field.referenceId(scope.entry);
-                }
-                var route = getDetailLinkRouteName(scope.field, relatedEntity);
-                $state.go($state.get(route), {
-                    entity: referenceEntity,
-                    id: referenceId
-                });
-            };
-            scope.getReference = function () {
-                var referenceEntity = scope.field.targetEntity().name();
-                var relatedEntity = Configuration().getEntity(referenceEntity);
-                var referenceId;
-                if (scope.field.type() !== 'nested_reference') {
-                    referenceId = scope.entry.values[scope.field.name()];
-                } else {
-                    referenceId = scope.field.referenceId(scope.entry);
-                }
-                var route = getDetailLinkRouteName(scope.field, relatedEntity);
-                var params = {
-                    entity: referenceEntity,
-                    id: referenceId
-                };
-                return $state.href(route, params);
-            };
         }
     };
 }

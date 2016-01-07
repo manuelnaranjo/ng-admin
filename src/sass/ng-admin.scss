@@ -41,8 +41,8 @@ ul.collapsible {
 }
 
 /**
- * Dashboard
- */
+* Dashboard
+*/
 .dashboard-starter {
     margin-bottom: 30px;
 }
@@ -93,8 +93,8 @@ ul.collapsible {
 }
 
 /**
- * Grid
- */
+* Grid
+*/
 
 #page-wrapper .page-header {
     margin: 10px 0 15px;
@@ -125,7 +125,7 @@ ma-view-actions {
             }
 
             .btn-default {
-                height: 34px;
+              height: 34px;
             }
         }
 
@@ -203,8 +203,8 @@ div.bottom-loader {
 }
 
 /**
- * Edition form
- */
+* Edition form
+*/
 .form-horizontal {
 
     .has-feedback .form-control.ui-select-toggle {
@@ -272,6 +272,10 @@ div.bottom-loader {
         }
     }
 
+    .ng-admin-type-embedded_list .ng-admin-type-boolean ma-choice-field {
+        min-width: 12em;
+    }
+
     &#show-view {
         .label-default {
             margin-right: 5px;
@@ -318,102 +322,3 @@ div.bottom-loader {
     }
 }
 
-&#show-view, {
-    fieldset {
-        .row-fluid {
-            .form-group {
-                .form-control {
-                    border: initial;
-                    border-radius: initial;
-                    box-shadow: initial;
-                    padding: initial;
-                }
-            }
-        }
-    }
-}
-&#show-view, &#create-view, &#edit-view {
-    fieldset {
-        padding-bottom: 5px;
-
-        legend {
-            border: none;
-            border-bottom: 4px solid #404040;
-            color: #404040;
-            font-size: 18px;
-            font-weight: bold;
-            padding-bottom: 5px;
-            position: static;
-            width: 100%;
-            margin-bottom: 0px;
-        }
-
-        .row-fluid {
-            .form-field {
-                min-height: 80px;
-            }
-
-            label {
-                padding: 0px;
-            }
-
-            label.col-sm-2 {
-                width: 100%;
-                text-align: left;
-            }
-
-            .row {
-                .col-sm-4, .col-md-3 {
-                    width: 100%;
-                    text-align: left;
-                }
-            }
-
-            p span{
-                display: block;
-                height: 34px;
-                padding-top: 12px;
-                padding-bottom: 7px;
-                font-size: 14px;
-            }
-
-            .date_widget {
-                width: 100%;
-            }
-
-            p {
-                padding-top: 13px;
-                paddint-bottom: 6px;
-            }
-
-            .form-group {
-                margin-left: initial;
-                margin-right: initial;
-                margin-bottom: initial;
-
-                padding: 8px;
-            }
-
-            ma-date-field.col-sm-4 {
-                width: 100%; // force width;
-                button {
-                    padding-bottom: 7px; // fix alignment
-                }
-            }
-        }
-
-        @media only screen and (min-width: 700px) {
-            .row-fluid {
-                .form-group {
-                    border: initial;
-                    border-right: 1px solid #333333;
-                    border-bottom: 1px solid #333333;
-                }
-
-                .form-group:last-child {
-                    border-right: initial;
-                }
-            }
-        }
-    }
-}
