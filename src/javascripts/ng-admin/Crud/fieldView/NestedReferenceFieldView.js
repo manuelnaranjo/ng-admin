@@ -1,8 +1,8 @@
 var ReferenceFieldView = require('./ReferenceFieldView');
 
 module.exports = {
-    getReadWidget:   () => '<ma-string-column value="::field.labelDisplay(entry)"></ma-string-column>',
-    getLinkWidget:   () => '<a ng-click="gotoReference()">' + module.exports.getReadWidget() + '</a>',
+    getReadWidget:   () => '<ma-reference-column field="::field" value="::field.labelDisplay(entry)" datastore="::datastore"></ma-reference-column>',
+    getLinkWidget:   () => '<ma-reference-link-column entry="::entry" field="::field" value="::field.labelDisplay(entry)" datastore="::datastore"></ma-reference-link-column>',
     getFilterWidget: () => ReferenceFieldView.getFilterWidget(),
     getWriteWidget:  () => ReferenceFieldView.getWriteWidget()
 };
