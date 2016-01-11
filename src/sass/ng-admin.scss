@@ -272,7 +272,7 @@ div.bottom-loader {
         }
     }
 
-    &#show-view {
+    #show-view {
         .label-default {
             margin-right: 5px;
             font-weight: normal;
@@ -318,7 +318,7 @@ div.bottom-loader {
     }
 }
 
-&#show-view, {
+#show-view, {
     fieldset {
         .row-fluid {
             .form-group {
@@ -332,7 +332,7 @@ div.bottom-loader {
         }
     }
 }
-&#show-view, &#create-view, &#edit-view {
+#show-view, #create-view, #edit-view {
     fieldset {
         padding-bottom: 5px;
 
